@@ -40,6 +40,7 @@ var map = L.map('map', {
         callback: zoomOut
     }]
 });
+
 //basemaps start here
 var basemaps = [
     L.tileLayer('http://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png', {
@@ -86,8 +87,8 @@ var layer2 =    L.tileLayer.betterWms(url, {
 }).addTo(map);
 
 var geoserverLayers = {
-  "Road Network": layer1,
-  "LGA Boundary": layer2
+    "Road Network": layer1,
+    "LGA Boundary": layer2
 };
 
 //mouse coordinates
@@ -101,3 +102,25 @@ L.control.layers(null, geoserverLayers, {
     position: 'topright',
     collapsed: false
 }).addTo(map);
+//logo
+
+L.Control.Watermark = L.Control.extend({
+    onAdd: function(map) {
+        var img = L.DomUtil.create('img');
+
+        img.src = 'img/unhabitat.png';
+        img.style.width = '250px';
+
+        return img;
+    },
+
+    onRemove: function(map) {
+        
+    }
+});
+
+L.control.watermark = function(opts) {
+    return new L.Control.Watermark(opts);
+}
+
+	L.control.watermark({ position: 'bottomright' }).addTo(map);
