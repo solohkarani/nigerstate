@@ -17,6 +17,9 @@ div#layercontrol {
     font-family: Quicksand, sans-serif;
     font-weight: 500
 }
+#transport, #admin, #urban {
+    margin-left: 10px
+}
 #sidebar-wrapper {
     min-height: 100vh;
     margin-left: -15rem;
@@ -60,7 +63,7 @@ div#layercontrol {
     top: 0;
     right: 0;
     padding: 4px 4px 0 0;
-    border: none;
+    border: solid;
     text-align: center;
     width: 18px;
     height: 14px;
