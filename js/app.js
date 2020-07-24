@@ -1,3 +1,8 @@
+//modal
+$("#exampleModalBtn").click(function() {
+  $("#exampleModal").modal("show");
+  return false;
+});
 //context menu functions 
 function showCoordinates(e) {
     alert(e.latlng);
@@ -116,14 +121,13 @@ var transportInfrastructure = L.tileLayer.betterWms(url, {
     attribution: '&copy; <a href="http://cartodb.com/attributions">UNHabitat</a>',
 });
 
-//mouse coordinates
-L.control.mouseCoordinate({
-    gpsLong: true,
-    utm: true,
-    utmref: false,
-    gps: true
-}).addTo(map);
-
+//water body
+var waterArea = L.tileLayer.betterWms(url, {
+    layers: 'nigerstate:water_areas',
+    transparent: true,
+    format: 'image/png',
+    attribution: '&copy; <a href="http://cartodb.com/attributions">UNHabitat</a>',
+});
 
 //habitatlogo
 L.Control.Watermark = L.Control.extend({
@@ -146,7 +150,15 @@ L.control.watermark = function (opts) {
 }
 
 L.control.watermark({
-    position: 'bottomright'
+    position: 'bottomleft'
+}).addTo(map);
+
+//mouse coordinates
+L.control.mouseCoordinate({
+    gpsLong: true,
+    utm: true,
+    utmref: false,
+    gps: true
 }).addTo(map);
 
 //set the color style
@@ -188,7 +200,7 @@ function resetHighlight(e) {
 lga_boundary = new L.geoJson(lga_boundary, {
     style: lgaStyle,
     onEachFeature: function (feature, layer) {
-        var content = "<table class='table table-bordered table-condensed'>"+"<caption style='color:Blue;font-size:1.5em; font-weight:800'; >"+ feature.properties.adm2_en +" LGA</caption>" + "<tr><th>LGA Name</th><td>" + feature.properties.adm2_en + "</td></tr>" + "<tr><th>Total Area</th><td>" + feature.properties.area + "</td></tr>" + "<tr><th>State</th><td>Niger State</td></tr>" + "<tr><th>Website</th><td><a class='url-break' href='" + feature.properties.area + "' target='_blank'>" + feature.properties.fid + "</a></td></tr>" + "<table>";
+        var content = "<table class='table table-bordered table-condensed'>"+"<caption style='color:Blue;font-size:1.5em; font-weight:800'; >"+ feature.properties.name +" LGA</caption>" + "<tr><th>LGA Name</th><td>" + feature.properties.name + "</td></tr>" + "<tr><th>Total Area</th><td>" + feature.properties.area + "</td></tr>" + "<tr><th>State</th><td>"+ feature.properties.state +"</td></tr>" + "<tr><th>Website</th><td><a class='url-break' href='" + feature.properties.area + "' target='_blank'>" + feature.properties.fid + "</a></td></tr>" + "<table>";
 
         layer.on({
             click: zoomToFeature,
@@ -262,20 +274,36 @@ map.addLayer(markerClusters);
 
 //layer control
 var admin = {
+    "State Boundary": lga_boundary,
     "LGA Boundary": lga_boundary,
+    "Minna Region": lga_boundary,
+    "Suleja Region": lga_boundary
 };
 var urban = {
-    "A) Main Urban Center": urban_centers,
-    "B) Urban Extent 2020": urbanization_2020,
-    "C) Urban Extent 2010": urbanization_2010,
-    "D) Urban Extent 2000": urbanization_2000,
-    "E) Urban Extent 1990": urbanization_1990,
-    "F) Urban Extent 1973": urbanization_1973,
+    "Urban Centers": urban_centers,
+    "Urban Extent 2020": urbanization_2020,
+    "Urban Extent 2010": urbanization_2010,
+    "Urban Extent 2000": urbanization_2000,
+    "Urban Extent 1990": urbanization_1990,
+    "Urban Extent 1973": urbanization_1973,
 };
 var transport = {
+    "Airport": transportInfrastructure,
     "Road Network": transportInfrastructure,
+    "Railway Line": transportInfrastructure,
+    "Railway Stations": transportInfrastructure
 };
-
+var natural = {
+    "Rivers": urban_centers,
+    "Lakes and Dams": waterArea,
+    "Forest Cover": urbanization_2010,
+};
+var utility = {
+    "High Volt Powerline": urban_centers,
+    "Oil Pipeline": urbanization_2020,
+    "Sewer Line": urbanization_1973,
+    
+};
 //send layer control to sidebar
 var layerControlTransport = L.control.layers(null, transport, {
     position: 'topright',
@@ -319,3 +347,31 @@ function setParent(el, newParent) {
     newParent.appendChild(el);
 }
 setParent(layerObject_3, c);
+
+/*****************/
+var layerControlNatural = L.control.layers(null, natural, {
+    position: 'topright',
+    collapsed: false
+}).addTo(map);
+
+var layerObject_4 = layerControlNatural.getContainer();
+var d = document.getElementById('natural');
+
+function setParent(el, newParent) {
+    newParent.appendChild(el);
+}
+setParent(layerObject_4, d);
+
+/*****************/
+var layerControlUtility = L.control.layers(null, utility, {
+    position: 'topright',
+    collapsed: false
+}).addTo(map);
+
+var layerObject_5 = layerControlUtility.getContainer();
+var e = document.getElementById('utility');
+
+function setParent(el, newParent) {
+    newParent.appendChild(el);
+}
+setParent(layerObject_5, e);
